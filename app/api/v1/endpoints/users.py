@@ -25,4 +25,4 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     user = db.query(User).filter(User.email == form_data.username).first()
     if not user or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Incorrect email or password")
-    return {"access_token": create_access_token(user.id)}
+    return {"access_token": create_access_token(user.id), "token_type": "bearer"}

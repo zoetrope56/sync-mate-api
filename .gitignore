@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# Alembic
+# (keep alembic/versions/ tracked)
+
+# Logs
+*.log
+
+# Node (orphaned package-lock.json is already committed — ignore future node artifacts)
+node_modules/
+
+# CLAUDE
+.claude/
+CLAUDE.md
+

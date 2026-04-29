@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.api.v1.deps import get_current_user
-from app.crud import crud_todo
+from app.crud import crud_character, crud_todo
 from app.db.session import get_db
 from app.models.user import User
 from app.schemas.todo import TodoCreate, TodoResponse, TodoUpdate
+from app.services import character_logic
 
 router = APIRouter()
 
@@ -38,7 +39,14 @@ def update_todo(
     todo = crud_todo.get_todo(db, todo_id=todo_id, user_id=current_user.id)
     if not todo:
         raise HTTPException(status_code=404, detail="Todo not found")
-    return crud_todo.update_todo(db, todo=todo, data=data)
+    completing = data.is_completed is True and not todo.is_completed
+    updated = crud_todo.update_todo(db, todo=todo, data=data)
+    if completing:
+        character = crud_character.get_character_by_user(db, user_id=current_user.id)
+        if character:
+            character_logic.apply_todo_complete(character)
+            crud_character.save_character(db, character)
+    return updated
 
 
 @router.delete("/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
