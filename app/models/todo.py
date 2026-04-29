@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
-from app.db.base import Base
+from app.db.base_class import Base
 
 
 class Todo(Base):

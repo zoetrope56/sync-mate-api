@@ -41,10 +41,19 @@ coverage.xml
 # Logs
 *.log
 
-# Node (orphaned package-lock.json is already committed — ignore future node artifacts)
+# Node (orphaned)
 node_modules/
+package-lock.json
+package.json
 
 # CLAUDE
 .claude/
 CLAUDE.md
+
+# mypy / pyright
+.mypy_cache/
+.pyright/
+
+# pyenv
+.python-version
 
