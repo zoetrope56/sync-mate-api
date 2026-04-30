@@ -15,7 +15,6 @@ class TodoUpdate(BaseModel):
 
 class TodoResponse(BaseModel):
     id: int
-    user_id: int
     title: str
     description: str | None
     is_completed: bool

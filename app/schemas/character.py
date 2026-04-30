@@ -8,7 +8,6 @@ class CharacterCreate(BaseModel):
 
 class CharacterResponse(BaseModel):
     id: int
-    user_id: int
     name: str
     level: int
     exp: int

@@ -41,6 +41,11 @@
 - [ ] Socket.io를 통한 멀티 디바이스 상태 동기화
 - [ ] 할 일 완료 이벤트 → 클라이언트 캐릭터 애니메이션 트리거
 
+### 테스트
+- [x] 회원가입 / 로그인 / 인증 실패
+- [x] Todo CRUD 및 소유권 검증
+- [x] 캐릭터 생성 / 상호작용 / 레벨업 / Todo 완료 연동
+
 ---
 
 ## 🗄️ 데이터베이스 스키마
@@ -90,6 +95,10 @@ sync-mate-api/
 │   └── services/
 │       └── character_logic.py   # 경험치, 레벨업 계산 규칙
 ├── tests/
+│   ├── conftest.py              # 테스트 DB 픽스처 (SQLite in-memory)
+│   ├── test_users.py            # 인증 테스트
+│   ├── test_todos.py            # Todo CRUD 테스트
+│   └── test_character.py        # 캐릭터 테스트
 ├── alembic/
 ├── .env
 ├── requirements.txt
@@ -118,10 +127,12 @@ sync-mate-api/
 
 ## ⚙️ 핵심 로직 흐름
 
-1. **할 일 완료**: `PATCH /todos/{id}` → `is_completed: true` 설정 → 캐릭터 EXP · 행복도 자동 상승
-2. **알람 예약**: Todo 생성 시 Schedule 등록 → BullMQ가 Redis에 작업 큐 등록
-3. **알람 발송**: 예약 시각 도달 → 서버 워커가 텔레그램 봇으로 캐릭터 말투 메시지 전송
-4. **실시간 교감**: 모바일에서 완료 체크 → Socket.io 이벤트 → PC 앱 캐릭터 즉시 반응
+1. **할 일 완료**: `PATCH /todos/{id}` → `is_completed: true` 설정 → 캐릭터 EXP +20 · 행복도 +5 자동 상승
+2. **캐릭터 쓰다듬기**: `POST /character/interact` → EXP +5 · 행복도 +10 (레벨업 가능)
+3. **레벨업**: 누적 EXP ≥ `레벨 × 100` 도달 시 레벨 +1, 잉여 EXP 이월
+4. **알람 예약**: Todo 생성 시 Schedule 등록 → BullMQ가 Redis에 작업 큐 등록
+5. **알람 발송**: 예약 시각 도달 → 서버 워커가 텔레그램 봇으로 캐릭터 말투 메시지 전송
+6. **실시간 교감**: 모바일에서 완료 체크 → Socket.io 이벤트 → PC 앱 캐릭터 즉시 반응
 
 ---
 

@@ -12,7 +12,7 @@ class Character(Base):
     name: Mapped[str] = mapped_column(String(50), nullable=False)
     level: Mapped[int] = mapped_column(Integer, default=1)
     exp: Mapped[int] = mapped_column(Integer, default=0)
-    happiness: Mapped[int] = mapped_column(Integer, default=100)  # 0~100
-    hunger: Mapped[int] = mapped_column(Integer, default=100)    # 0~100
+    happiness: Mapped[int] = mapped_column(Integer, default=50)  # 0~100
+    hunger: Mapped[int] = mapped_column(Integer, default=50)    # 0~100
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))

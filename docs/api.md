@@ -79,7 +79,6 @@ password=abcd1234
 [
   {
     "id": 1,
-    "user_id": 1,
     "title": "운동하기",
     "description": "30분 달리기",
     "is_completed": false,
@@ -103,7 +102,17 @@ password=abcd1234
 ```
 - `description`: 선택 항목
 
-**Response** `201` — TodoResponse
+**Response** `201`
+```json
+{
+  "id": 1,
+  "title": "운동하기",
+  "description": "30분 달리기",
+  "is_completed": false,
+  "created_at": "2026-04-29T10:00:00Z",
+  "updated_at": "2026-04-29T10:00:00Z"
+}
+```
 
 ---
 
@@ -123,7 +132,17 @@ password=abcd1234
 
 > `is_completed`를 `false → true`로 변경하면 캐릭터 EXP · 행복도가 상승합니다.
 
-**Response** `200` — TodoResponse
+**Response** `200`
+```json
+{
+  "id": 1,
+  "title": "수정된 제목",
+  "description": "수정된 내용",
+  "is_completed": true,
+  "created_at": "2026-04-29T10:00:00Z",
+  "updated_at": "2026-04-29T10:01:00Z"
+}
+```
 
 **오류**
 | 코드 | 원인 |
@@ -164,7 +183,6 @@ password=abcd1234
 ```json
 {
   "id": 1,
-  "user_id": 1,
   "name": "모찌",
   "level": 1,
   "exp": 0,
@@ -199,10 +217,21 @@ password=abcd1234
 
 요청 바디 없음.
 
+쓰다듬을 때마다 **EXP +5 · 행복도 +10**이 적용됩니다. EXP가 레벨업 기준(`레벨 × 100`)에 도달하면 레벨이 오르고 잉여 EXP는 이월됩니다.
+
 **Response** `200`
 ```json
 {
-  "character": { /* CharacterResponse */ },
+  "character": {
+    "id": 1,
+    "name": "모찌",
+    "level": 1,
+    "exp": 5,
+    "happiness": 60,
+    "hunger": 50,
+    "created_at": "2026-04-29T10:00:00Z",
+    "updated_at": "2026-04-29T10:01:00Z"
+  },
   "leveled_up": false,
   "message": "캐릭터를 쓰다듬었습니다!"
 }
