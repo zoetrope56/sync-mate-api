@@ -16,13 +16,16 @@
 ### Todo 관리
 - [x] 할 일 생성 / 조회 / 수정 / 삭제
 - [x] 완료 상태 토글 (`is_completed`)
+- [x] 완료 시 캐릭터 EXP · 행복도 자동 상승
 - [ ] 마감 기한(Due Date) 설정
 - [ ] 알람 시간 설정 (10분 전, 정각 등)
 
 ### 캐릭터 시스템 (다마고치)
-- [x] 캐릭터 상태 조회 (경험치, 행복도, 스킨)
+- [x] 캐릭터 생성 (계정당 1개)
+- [x] 캐릭터 상태 조회 (레벨, 경험치, 행복도, 배고픔)
+- [x] 캐릭터 쓰다듬기 (행복도 / EXP 상승)
 - [x] 할 일 완료 시 경험치 / 친밀도 상승
-- [ ] 레벨업 계산 및 스킨 해금
+- [ ] 레벨업 스킨 해금
 - [ ] 집중 모드 상태 연동 (타이머 API)
 
 ### 알림 시스템
@@ -44,9 +47,9 @@
 
 | 테이블 | 주요 필드 | 설명 |
 |--------|-----------|------|
-| **User** | id, email, password, telegram_id | 사용자 정보 및 알람 수신 ID |
-| **Todo** | id, user_id, content, is_completed, due_date | 할 일 내용 및 마감 기한 |
-| **MateStatus** | user_id, exp, happiness, current_skin | 캐릭터 레벨, 기분 상태 |
+| **User** | id, email, hashed_password, is_active | 사용자 정보 및 활성 상태 |
+| **Todo** | id, user_id, title, description, is_completed | 할 일 내용 및 완료 여부 |
+| **Character** | id, user_id, name, level, exp, happiness, hunger | 캐릭터 상태 (레벨, 경험치, 행복도, 배고픔) |
 | **Schedule** | id, todo_id, alarm_time, status | 알람 예약 시간 및 발송 상태 |
 | **Timer** | id, todo_id, duration, started_at | 집중 시간 기록 및 경험치 산정 |
 
@@ -95,9 +98,27 @@ sync-mate-api/
 
 ---
 
+## 🔗 API 엔드포인트
+
+> Base URL: `http://localhost:8000/api/v1` |  상세 명세: [docs/api.md](docs/api.md)
+
+| 메서드 | 경로 | 설명 | 인증 |
+|--------|------|------|------|
+| POST | `/users/register` | 회원가입 | ✗ |
+| POST | `/users/login` | 로그인 (JWT 발급) | ✗ |
+| GET | `/todos/` | 내 할 일 목록 조회 | ✓ |
+| POST | `/todos/` | 할 일 생성 | ✓ |
+| PATCH | `/todos/{id}` | 할 일 수정 / 완료 토글 | ✓ |
+| DELETE | `/todos/{id}` | 할 일 삭제 | ✓ |
+| POST | `/character/` | 캐릭터 생성 | ✓ |
+| GET | `/character/` | 캐릭터 상태 조회 | ✓ |
+| POST | `/character/interact` | 캐릭터 쓰다듬기 | ✓ |
+
+---
+
 ## ⚙️ 핵심 로직 흐름
 
-1. **할 일 등록**: 클라이언트 → Todo 생성 API → DB 저장 → 캐릭터 기분 업데이트
+1. **할 일 완료**: `PATCH /todos/{id}` → `is_completed: true` 설정 → 캐릭터 EXP · 행복도 자동 상승
 2. **알람 예약**: Todo 생성 시 Schedule 등록 → BullMQ가 Redis에 작업 큐 등록
 3. **알람 발송**: 예약 시각 도달 → 서버 워커가 텔레그램 봇으로 캐릭터 말투 메시지 전송
 4. **실시간 교감**: 모바일에서 완료 체크 → Socket.io 이벤트 → PC 앱 캐릭터 즉시 반응
@@ -125,18 +146,30 @@ source venv/bin/activate
 pip install -r requirements.txt
 
 # 2. 환경변수 설정 (.env 파일 생성)
-POSTGRES_SERVER=
+cat > .env << EOF
+POSTGRES_SERVER=localhost
 POSTGRES_PORT=5432
-POSTGRES_USER=
-POSTGRES_PASSWORD=
-POSTGRES_DB=
+POSTGRES_USER=<your_user>
+POSTGRES_PASSWORD=<your_password>
+POSTGRES_DB=<your_db>
 REDIS_HOST=localhost
 REDIS_PORT=6379
-SECRET_KEY=
+SECRET_KEY=<your_secret_key>
+EOF
 
-# 3. DB 마이그레이션
+# 3. PostgreSQL 시작 (WSL2)
+sudo service postgresql start
+
+# 4. DB 및 유저 생성 (최초 1회)
+sudo -u postgres psql -c "CREATE USER <your_user> WITH PASSWORD '<your_password>';"
+sudo -u postgres psql -c "CREATE DATABASE <your_db> OWNER <your_user>;"
+
+# 5. DB 마이그레이션
 alembic upgrade head
 
-# 4. 서버 실행
+# 6. 서버 실행
 uvicorn app.main:app --reload
 ```
+
+- **API 문서** (Swagger UI): `http://localhost:8000/docs`
+- **ReDoc**: `http://localhost:8000/redoc`

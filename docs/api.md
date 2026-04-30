@@ -42,7 +42,7 @@
 
 **Request Body** (`application/x-www-form-urlencoded`)
 ```
-username=user@example.com
+email=user@example.com
 password=abcd1234
 ```
 
