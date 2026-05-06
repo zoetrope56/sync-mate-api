@@ -57,7 +57,7 @@ def test_todo_complete_increases_character_exp(client, auth_headers):
 
 
 def test_levelup_on_interact(client, auth_headers):
-    from app.services.character_logic import INTERACT_EXP, EXP_PER_LEVEL
+    from app.domain.character.entity import INTERACT_EXP, EXP_PER_LEVEL
 
     client.post("/api/v1/character/", json={"name": "모찌"}, headers=auth_headers)
 
