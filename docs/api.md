@@ -82,8 +82,8 @@ password=abcd1234
     "title": "운동하기",
     "description": "30분 달리기",
     "is_completed": false,
-    "created_at": "2026-04-29T10:00:00Z",
-    "updated_at": "2026-04-29T10:00:00Z"
+    "created_at": "2026-04-29 10:00:00",
+    "updated_at": "2026-04-29 10:00:00"
   }
 ]
 ```
@@ -109,8 +109,8 @@ password=abcd1234
   "title": "운동하기",
   "description": "30분 달리기",
   "is_completed": false,
-  "created_at": "2026-04-29T10:00:00Z",
-  "updated_at": "2026-04-29T10:00:00Z"
+  "created_at": "2026-04-29 10:00:00",
+  "updated_at": "2026-04-29 10:00:00"
 }
 ```
 
@@ -139,8 +139,8 @@ password=abcd1234
   "title": "수정된 제목",
   "description": "수정된 내용",
   "is_completed": true,
-  "created_at": "2026-04-29T10:00:00Z",
-  "updated_at": "2026-04-29T10:01:00Z"
+  "created_at": "2026-04-29 10:00:00",
+  "updated_at": "2026-04-29 10:01:00"
 }
 ```
 
@@ -188,8 +188,8 @@ password=abcd1234
   "exp": 0,
   "happiness": 50,
   "hunger": 50,
-  "created_at": "2026-04-29T10:00:00Z",
-  "updated_at": "2026-04-29T10:00:00Z"
+  "created_at": "2026-04-29 10:00:00",
+  "updated_at": "2026-04-29 10:00:00"
 }
 ```
 
@@ -229,8 +229,8 @@ password=abcd1234
     "exp": 5,
     "happiness": 60,
     "hunger": 50,
-    "created_at": "2026-04-29T10:00:00Z",
-    "updated_at": "2026-04-29T10:01:00Z"
+    "created_at": "2026-04-29 10:00:00",
+    "updated_at": "2026-04-29 10:01:00"
   },
   "leveled_up": false,
   "message": "캐릭터를 쓰다듬었습니다!"
