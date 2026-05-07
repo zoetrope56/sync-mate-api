@@ -73,27 +73,28 @@ sync-mate-api/
 │   │       │   ├── todos.py     # 할 일 CRUD
 │   │       │   └── character.py # 캐릭터 상태, 레벨업
 │   │       ├── api.py           # 라우터 통합
-│   │       └── deps.py          # 공통 의존성 (get_current_user)
+│   │       └── deps.py          # 공통 의존성 (get_current_user, get_*_repo)
 │   ├── core/
 │   │   ├── config.py            # 환경변수 설정 (pydantic-settings)
 │   │   └── security.py          # JWT 생성/검증, 비밀번호 해싱
-│   ├── crud/
-│   │   ├── crud_todo.py
-│   │   ├── crud_character.py
-│   │   └── crud_user.py
-│   ├── models/                  # SQLAlchemy ORM 테이블 정의
-│   │   ├── user.py
-│   │   ├── todo.py
-│   │   └── character.py
+│   ├── domain/                  # DDD 도메인 레이어
+│   │   ├── character/
+│   │   │   ├── entity.py        # Character ORM 모델 + 도메인 로직 (apply_interact 등)
+│   │   │   └── repository.py    # CharacterRepository (DB 접근)
+│   │   ├── todo/
+│   │   │   ├── entity.py        # Todo ORM 모델
+│   │   │   └── repository.py    # TodoRepository
+│   │   └── user/
+│   │       ├── entity.py        # User ORM 모델
+│   │       └── repository.py    # UserRepository
 │   ├── schemas/                 # Pydantic 입출력 모델
 │   │   ├── user.py
 │   │   ├── todo.py
 │   │   └── character.py
-│   ├── db/
-│   │   ├── session.py           # DB 엔진 및 세션
-│   │   └── base.py              # Alembic 모델 등록
-│   └── services/
-│       └── character_logic.py   # 경험치, 레벨업 계산 규칙
+│   └── db/
+│       ├── session.py           # DB 엔진 및 세션
+│       ├── base_class.py        # SQLAlchemy DeclarativeBase
+│       └── base.py              # Alembic 모델 등록 (모든 entity import)
 ├── tests/
 │   ├── conftest.py              # 테스트 DB 픽스처 (SQLite in-memory)
 │   ├── test_users.py            # 인증 테스트
@@ -127,9 +128,9 @@ sync-mate-api/
 
 ## ⚙️ 핵심 로직 흐름
 
-1. **할 일 완료**: `PATCH /todos/{id}` → `is_completed: true` 설정 → 캐릭터 EXP +20 · 행복도 +5 자동 상승
-2. **캐릭터 쓰다듬기**: `POST /character/interact` → EXP +5 · 행복도 +10 (레벨업 가능)
-3. **레벨업**: 누적 EXP ≥ `레벨 × 100` 도달 시 레벨 +1, 잉여 EXP 이월
+1. **할 일 완료**: `PATCH /todos/{id}` → `is_completed: true` 설정 → `Character.apply_todo_complete()` 호출 → EXP +20 · 행복도 +5 자동 상승
+2. **캐릭터 쓰다듬기**: `POST /character/interact` → `Character.apply_interact()` 호출 → EXP +5 · 행복도 +10 (레벨업 가능)
+3. **레벨업**: 누적 EXP ≥ `레벨 × 100` 도달 시 레벨 +1, 잉여 EXP 이월 (`Character._add_exp()` 내부 처리)
 4. **알람 예약**: Todo 생성 시 Schedule 등록 → BullMQ가 Redis에 작업 큐 등록
 5. **알람 발송**: 예약 시각 도달 → 서버 워커가 텔레그램 봇으로 캐릭터 말투 메시지 전송
 6. **실시간 교감**: 모바일에서 완료 체크 → Socket.io 이벤트 → PC 앱 캐릭터 즉시 반응
