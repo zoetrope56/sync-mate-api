@@ -185,3 +185,35 @@ uvicorn app.main:app --reload
 
 - **API 문서** (Swagger UI): `http://localhost:8000/docs`
 - **ReDoc**: `http://localhost:8000/redoc`
+
+### ⚡ start.sh로 한 번에 실행
+
+`.env` 파일과 DB/유저 생성(최초 1회)이 완료된 이후에는 스크립트 하나로 실행 가능합니다.
+
+```bash
+chmod +x start.sh  # 최초 1회
+./start.sh         # 가상환경 생성 → 의존성 설치 → 마이그레이션 → 서버 시작
+```
+
+---
+
+## 🧪 테스트
+
+테스트는 SQLite in-memory DB를 사용하므로 PostgreSQL 없이 실행 가능합니다.
+
+```bash
+# 전체 테스트 실행
+venv/bin/pytest
+
+# 특정 파일만 실행
+venv/bin/pytest tests/test_todos.py
+
+# 상세 출력
+venv/bin/pytest -v
+```
+
+| 파일 | 테스트 대상 |
+|------|-------------|
+| `tests/test_users.py` | 회원가입 / 로그인 / 인증 실패 |
+| `tests/test_todos.py` | Todo CRUD 및 소유권 검증 |
+| `tests/test_character.py` | 캐릭터 생성 / 상호작용 / 레벨업 / Todo 완료 연동 |
